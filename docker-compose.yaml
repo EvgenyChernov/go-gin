@@ -2,8 +2,8 @@
 services:
   # База данных PostgreSQL для сервиса авторизации
   db_auth:
-    # Образ PostgreSQL версии 14 с использованием Alpine Linux
-    image: postgres:14-alpine
+    # Образ PostgreSQL версии 16 с использованием Alpine Linux (последняя стабильная версия)
+    image: postgres:16-alpine
     # Имя контейнера
     container_name: db_auth
     # Порты, которые будут проброшены из контейнера наружу
