@@ -92,18 +92,26 @@ func (p *DBService) Update(ctx context.Context, user *models.User) error {
 		return gorm.ErrInvalidData
 	}
 
+	// Создаем копию пользователя для обновления
+	updateData := *user
+
 	// Если пароль не пустой, значит он был изменен и нужно его хешировать
 	if user.Password != "" {
 		hashedPassword, err := user.HashPassword(user.Password)
 		if err != nil {
 			return err
 		}
-		user.Password = hashedPassword
-	}
-
-	// Используем контекст для управления временем выполнения операции
-	if err := p.db.WithContext(ctx).Save(user).Error; err != nil {
-		return err
+		updateData.Password = hashedPassword
+		// Обновляем все поля, включая пароль
+		if err := p.db.WithContext(ctx).Model(user).Updates(updateData).Error; err != nil {
+			return err
+		}
+	} else {
+		// Если пароль не передан, обновляем все поля кроме пароля
+		// Это предотвращает обнуление старого пароля
+		if err := p.db.WithContext(ctx).Model(user).Omit("password").Updates(updateData).Error; err != nil {
+			return err
+		}
 	}
 
 	return nil
