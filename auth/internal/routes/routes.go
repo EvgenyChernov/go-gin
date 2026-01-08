@@ -15,13 +15,19 @@ func SetupRouter(h *handler.Handler) *gin.Engine {
 	// Группа маршрутов для аутентификации
 	auth := router.Group("/auth")
 	{
-		// Публичные endpoints
+		// Публичные endpoints (без авторизации)
 		auth.POST("/register", h.RegisterUser)
 		auth.POST("/login", h.LoginUser)
-		// Защищенные endpoints
-		auth.GET("/user", h.GetUserInfo)
-		auth.PUT("/user", h.UpdateUser)
-		auth.DELETE("/user", h.DeleteUser)
+		auth.POST("/refresh", h.RefreshToken)
+
+		// Защищенные endpoints (требуют авторизации)
+		protected := auth.Group("/")
+		protected.Use(h.RequireAuth()) // Применяем middleware аутентификации
+		{
+			protected.GET("/user", h.GetUserInfo)
+			protected.PUT("/user", h.UpdateUser)
+			protected.DELETE("/user", h.DeleteUser)
+		}
 	}
 
 	return router
