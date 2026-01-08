@@ -4,6 +4,8 @@ go 1.25.5
 
 require github.com/gin-gonic/gin v1.11.0
 
+require github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
@@ -11,7 +13,10 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	jwt_manager v0.0.0
 )
+
+replace jwt_manager => ../pkg/jwtmanager
 
 require (
 	github.com/bytedance/sonic v1.14.0 // indirect
@@ -37,7 +42,7 @@ require (
 	github.com/ugorji/go/codec v1.3.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	golang.org/x/arch v0.20.0 // indirect
-	golang.org/x/crypto v0.46.0 // indirect
+	golang.org/x/crypto v0.46.0
 	golang.org/x/mod v0.30.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
