@@ -2,6 +2,7 @@ package main
 
 import (
 	"auth/internal/config"
+	"auth/internal/server"
 	"fmt"
 )
 
@@ -21,14 +22,16 @@ func main() {
 	fmt.Printf("JWT Secret Key: %s\n", cfg.JWTSecretKey)
 	fmt.Printf("=============================\n")
 
-	// // Создаем новый роутер Gin
-	// router := gin.Default()
-
-	// router.GET("/ping", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"message": "Привет я Gin!",
-	// 	})
-	// })
-
-	// router.Run(":8101")
+	server, err := server.NewServer(cfg)
+	if err != nil {
+		fmt.Printf("Ошибка при создании сервера %v\n", err)
+		return
+	}
+	fmt.Printf("Сервер успешно создан\n")
+	// Запускаем сервер
+	if err := server.Serve(); err != nil {
+		fmt.Printf("Ошибка запуска сервера %v\n", err)
+		return
+	}
+	fmt.Printf("Сервер запущен успешно\n")
 }
