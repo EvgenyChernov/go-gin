@@ -5,12 +5,18 @@ import (
 
 	"notes/internal/config"
 	"notes/internal/handler"
+	"notes/internal/routes"
+	"notes/internal/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Структура сервера
 type Server struct {
 	// Конфигурация сервера
 	cfg *config.Config
+	// Маршрутизатор Gin
+	router *gin.Engine // Новое поле для маршрутизатора
 }
 
 // NewServer - конструктор сервера
@@ -19,17 +25,23 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	if cfg == nil {
 		return nil, fmt.Errorf("конфигурация сервера не может быть nil")
 	}
+	service, err := service.NewService(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("не удалось создать сервис: %w", err)
+	}
 	// Создаем новый экземпляр обработчика
-	handler := handler.NewHandler(cfg)
+	handler := handler.NewHandler(cfg, service)
 	// Проверяем, что обработчик успешно создан
 	if handler == nil {
 		return nil, fmt.Errorf("не удалось создать обработчик сервера")
 	}
 	fmt.Println("Обработчик сервера успешно создан")
-
+	// Создаем новый экземпляр маршрутизатора
+	router := routes.SetupRouter(handler)
 	// Создаем новый экземпляр сервера
 	return &Server{
-		cfg: cfg,
+		router: router,
+		cfg:    cfg,
 	}, nil
 }
 
@@ -51,8 +63,10 @@ func (s *Server) Serve() error {
 		return err
 	}
 
-	// Запускаем сервер через Gin
+	// Запускаем сервер
 	address := fmt.Sprintf("%s:%s", s.cfg.Host, s.cfg.Port)
 	fmt.Printf("Сервер готов к обработке запросов на %s...\n", address)
-	return nil
+	// Используем s.router для запуска сервера
+	// Это позволяет нам использовать маршрутизатор, созданный в NewServer
+	return s.router.Run(address) // Новое
 }
