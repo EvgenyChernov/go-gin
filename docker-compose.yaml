@@ -20,6 +20,7 @@ services:
     networks:
       - notes_net
 
+  # Сервис авторизации
   auth:
     container_name: auth
     build:
@@ -47,10 +48,26 @@ services:
     networks:
       - notes_net
 
+  # CloudBeaver — web-версия DBeaver
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    ports:
+      - "8978:8978"
+    volumes:
+      - cloudbeaver_vol:/opt/cloudbeaver/workspace
+    depends_on:
+      - db_auth
+    restart: unless-stopped
+    networks:
+      - notes_net
+
 networks:
   notes_net:
     driver: bridge
 
 volumes:
-  db_auth_vol:  
+  db_auth_vol:
+    driver: local
+  cloudbeaver_vol:
     driver: local
