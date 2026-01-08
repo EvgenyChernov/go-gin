@@ -4,8 +4,8 @@
 # Автоматически извлекает JWT токен и тестирует все маршруты
 
 # Базовый URL для API
-BASE_URL="http://localhost:8103/notes"
-AUTH_BASE_URL="http://localhost:8101/auth"
+BASE_URL="http://localhost/notes"
+AUTH_BASE_URL="http://localhost/auth"
 
 echo "🚀 Полное тестирование Notes API"
 echo "==============================="

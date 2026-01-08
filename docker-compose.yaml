@@ -26,8 +26,6 @@ services:
     build:
       context: .
       dockerfile: ./auth/Dockerfile
-    ports:
-      - ${AUTH_PORT}:${AUTH_PORT}
     environment:
       PORT: ${AUTH_PORT}
       HOST: ${AUTH_HOST}
@@ -52,8 +50,6 @@ services:
   cloudbeaver:
     image: dbeaver/cloudbeaver:latest
     container_name: cloudbeaver
-    ports:
-      - "8978:8978"
     volumes:
       - cloudbeaver_vol:/opt/cloudbeaver/workspace
     depends_on:
@@ -122,8 +118,6 @@ services:
     build:
       context: .
       dockerfile: ./notes/Dockerfile
-    ports:
-      - ${NOTES_PORT}:${NOTES_PORT}
     environment:
       PORT: ${NOTES_PORT}
       HOST: ${NOTES_HOST}
@@ -146,6 +140,20 @@ services:
     restart: always
     networks:
       - notes_net
+
+  nginx:
+    restart: on-failure
+    container_name: nginx
+    image: nginx:1.25.4-alpine
+    networks:
+      - notes_net
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+    depends_on:
+      - auth
+      - notes
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
 
 networks:
   notes_net:
