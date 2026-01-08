@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"notes/internal/config"
+	"notes/internal/server"
 )
 
 func main() {
@@ -19,7 +20,18 @@ func main() {
 	fmt.Printf("Redis Port: %s\n", cfg.RedisPort)
 	fmt.Printf("Redis Password: %s\n", cfg.RedisPassword)
 	fmt.Printf("JWT Secret Key: %s\n", cfg.JWTSecretKey)
-	fmt.Printf("Database Name: %s\n", cfg.DB_NAME)
-	fmt.Printf("Database Collection: %s\n", cfg.DB_COLLECTION)
 	fmt.Printf("=============================\n")
+
+	server, err := server.NewServer(cfg)
+	if err != nil {
+		fmt.Printf("Ошибка при создании сервера %v\n", err)
+		return
+	}
+	fmt.Printf("Сервер успешно создан\n")
+	// Запускаем сервер
+	if err := server.Serve(); err != nil {
+		fmt.Printf("Ошибка запуска сервера %v\n", err)
+		return
+	}
+	fmt.Printf("Сервер запущен успешно\n")
 }
